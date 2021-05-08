@@ -7,6 +7,12 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebAdmin", "WebAdmin\WebAdm
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlazorCore", "BlazorCore\BlazorCore.csproj", "{2B6811D0-F968-4AB9-B2E3-4EE22297FF69}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{7CEE848C-AE57-49D4-A383-B67C665F86FE}"
+	ProjectSection(SolutionItems) = preProject
+		.github\workflows\firebase-hosting-merge.yml = .github\workflows\firebase-hosting-merge.yml
+		.github\workflows\firebase-hosting-pull-request.yml = .github\workflows\firebase-hosting-pull-request.yml
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
