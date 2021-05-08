@@ -1,0 +1,30 @@
+﻿@page "/"
+@page "/{text}"
+@inject BlazorCore.Services.NotifyService NotifyService
+
+<h1>@Text!!!</h1>
+
+<div @onclick="Hello" style="height: 90vh;">
+    Welcome to your new app.
+    <SurveyPrompt @ref="surveyPrompt" Title="How is Blazor working for you?" />
+</div>
+
+
+@code {
+    private SurveyPrompt surveyPrompt;
+    private int counter = 1;
+
+    [Parameter]
+    public string Text { get; set; }
+
+    protected override void OnInitialized()
+    {
+        Text = Text ?? "Hello, world!";
+    }
+
+    private async Task Hello()
+    {
+        await surveyPrompt.SayHello("Hello");
+        await NotifyService.Update(Text, counter++);
+    }
+}

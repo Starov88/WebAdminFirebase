@@ -1,0 +1,81 @@
+﻿@inherits LayoutComponentBase
+
+<MatThemeProvider Theme="@theme2">
+    <MatAppBarContainer>
+        <MatAppBar Fixed="true">
+            <MatAppBarRow>
+                <MatAppBarSection>
+                    <MatIconButton ToggledChanged="TuggleMenu" Icon="menu"></MatIconButton>
+                    <MatAppBarTitle>WebAdmin Template - MatBlazor</MatAppBarTitle>
+                </MatAppBarSection>
+                <MatAppBarSection Align="@MatAppBarSectionAlign.End">
+                    <MatIconButton Disabled="!isAuthorizedUser" @onclick="OnProfileClickAsync" Icon="account_circle"></MatIconButton>
+                </MatAppBarSection>
+            </MatAppBarRow>
+        </MatAppBar>
+
+        <MatAppBarContent>
+            <MatDrawerContainer Style="width: 99vw;" DrawerWidth="300px">
+                <MatDrawer Style="position: fixed; background-color: #00b0ff;" @bind-Opened="isLeftMenuOpened">
+                    <ul class="nav flex-column">
+                        <li class="nav-item px-3">
+                            <NavLink class="nav-link" href="" Match="NavLinkMatch.All" @onclick="OnMenuItemClick">
+                                <span class="oi oi-home" aria-hidden="true"></span> Home
+                            </NavLink>
+                        </li>
+                        @if (isAuthorizedUser)
+                        {
+                            <li class="nav-item px-3">
+                                <NavLink class="nav-link" href="counter" @onclick="OnMenuItemClick">
+                                    <span class="oi oi-plus" aria-hidden="true"></span> Counter
+                                </NavLink>
+                            </li>
+                            <li class="nav-item px-3">
+                                <NavLink class="nav-link" href="fetchdata" @onclick="OnMenuItemClick">
+                                    <span class="oi oi-list-rich" aria-hidden="true"></span> Fetch data
+                                </NavLink>
+                            </li>
+                            <li class="nav-item px-3">
+                                <NavLink class="nav-link" href="users" @onclick="OnMenuItemClick">
+                                    <span class="oi oi-people" aria-hidden="true"></span> Users
+                                </NavLink>
+                            </li>
+                        }
+                        else
+                        {
+                            <li class="nav-item px-3">
+                                <NavLink class="nav-link" href="auth/login" @onclick="OnMenuItemClick">
+                                    <span class="oi oi-account-login" aria-hidden="true"></span> Login
+                                </NavLink>
+                            </li>
+                        }
+                    </ul>
+                </MatDrawer>
+                <MatDrawerContent>
+                    <div class="main">
+                        <div class="content px-4">
+                            @Body
+                        </div>
+                    </div>
+                </MatDrawerContent>
+            </MatDrawerContainer>
+        </MatAppBarContent>
+    </MatAppBarContainer>
+</MatThemeProvider>
+
+@code
+{
+    MatTheme theme1 = new MatTheme()
+    {
+        Primary = MatThemeColors.Orange._500.Value,
+        Secondary = MatThemeColors.BlueGrey._500.Value
+    };
+
+    MatTheme theme2 = new MatTheme()
+    {
+        Primary = "#0091ea",
+        Secondary = "#00b0ff",
+        Surface = "#eee",
+        OnPrimary = "#eee"
+    };
+}

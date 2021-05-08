@@ -1,0 +1,139 @@
+﻿@page "/users"
+@inject IRequestSenderService _requestSenderService
+@inject ILogger<UserList> _logger
+@inject NavigationManager _navigationManager
+@inherits DefaultDataPage
+
+@using BlazorCore.Enums
+@using BlazorCore.Models.Users
+
+<h3>Users</h3>
+
+@if (users == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    if (loadFailed)
+    {
+        <p><em>@errorMessage</em></p>
+    }
+    else
+    {
+        <MatTable Items="@users" Striped="true" PageSize="@pageSize" UseSortHeaderRow="true" AllowSelection="true" ShowPaging="false" OnRowDbClick="@OnRowClick" class="mat-elevation-z5">
+            @*<MatTableHeader>
+                    <th style="width: 350px">Id</th>
+                    <th style="width: 350px">Email</th>
+                    <th style="width: 350px">Name</th>
+                    <th>Status</th>
+                </MatTableHeader>*@
+            <MatTableHeader>
+                <MatSortHeaderRow SortChanged="@SortDataAsync">
+                    <MatSortHeader SortId="email"><span style="width:250px">Email</span></MatSortHeader>
+                    <MatSortHeader SortId="name"><span style="width:250px">Name</span></MatSortHeader>
+                    <MatSortHeader SortId="company"><span style="width:250px">Company</span></MatSortHeader>
+                    <MatSortHeader SortId="created"><span style="width:250px">Created</span></MatSortHeader>
+                    <MatSortHeader SortId="status"><span>Status</span></MatSortHeader>
+                </MatSortHeaderRow>
+            </MatTableHeader>
+            <MatTableRow>
+                <td>@context.Email</td>
+                <td>@context.FullName</td>
+                <td>@context.CompanyName</td>
+                <td>@context.CreatedAt.ToString("yyyy.MM.dd hh:mm")</td>
+                <td>@context.UserStatus</td>
+            </MatTableRow>
+        </MatTable>
+        <MatPaginator Length="@totalItems" PageSize="@pageSize" Page="@OnPageAsynk"></MatPaginator>
+    }
+}
+
+@code {
+    List<UserBriefModel> users = null;
+    static int pageSize = 10;
+    int pageIndex = 1;
+    private int totalItems = 0;
+    UserOrderBy userOrder = UserOrderBy.CreatedDateAsc;
+
+    protected override async Task OnInitializedAsync()
+    {
+        //_interceptor.RegisterEvent();
+        await SetListDataAsync();
+    }
+
+    private async Task OnPageAsynk(MatPaginatorPageEvent e)
+    {
+        pageSize = e.PageSize;
+        pageIndex = e.PageIndex + 1;
+        await SetListDataAsync();
+    }
+
+    private void OnRowClick(object row)
+    {
+        if (row is UserBriefModel)
+        {
+            _navigationManager.NavigateTo($"users/{((UserBriefModel)row).Id}");
+        }
+    }
+
+    private async Task SetListDataAsync()
+    {
+        ApiResponse<PaginatedModel<UserBriefModel>> result = null;
+        try
+        {
+            loadFailed = false;
+            result = await _requestSenderService
+                .SendAsync<ApiResponse<PaginatedModel<UserBriefModel>>>(HttpMethod.Get, $"v1/admin/users/list?page={pageIndex}&pagesize={pageSize}&order={userOrder}", null, null);
+            if (result.Success)
+            {
+                users = result.Data.Items ?? new List<UserBriefModel>();
+                totalItems = result.Data.TotalItemsCount;
+            }
+            else
+            {
+                throw new ApplicationException("Data retrieval error");
+            }
+        }
+        catch (Exception ex)
+        {
+            users = new List<UserBriefModel>();
+            pageIndex = 0;
+            totalItems = 0;
+            loadFailed = true;
+            errorMessage = ex.Message;
+            Error.ProcessError(ex);
+        }
+    }
+
+    async Task SortDataAsync(MatSortChangedEvent sort)
+    {
+        if (!(sort == null || sort.Direction == MatSortDirection.None || string.IsNullOrEmpty(sort.SortId)))
+        {
+            //Comparison<Dessert> comparison = null;
+            switch (sort.SortId)
+            {
+                case "email":
+                    userOrder = userOrder == UserOrderBy.LoginAsc ? UserOrderBy.LoginDesc : UserOrderBy.LoginAsc;
+                    break;
+                case "name":
+                    userOrder = userOrder == UserOrderBy.NameAsc ? UserOrderBy.NameDesc : UserOrderBy.NameAsc;
+                    break;
+                case "company":
+                    userOrder = userOrder == UserOrderBy.CompanyNameAsc ? UserOrderBy.CompanyNameDesc : UserOrderBy.CompanyNameAsc;
+                    break;
+                case "created":
+                    userOrder = userOrder == UserOrderBy.CreatedDateAsc ? UserOrderBy.CreatedDateDesc : UserOrderBy.CreatedDateAsc;
+                    break;
+                case "status":
+                    userOrder = userOrder == UserOrderBy.DisabledAsc ? UserOrderBy.DisabledDesc : UserOrderBy.DisabledAsc;
+                    break;
+                default:
+                    userOrder = UserOrderBy.CreatedDateAsc;
+                    break;
+            }
+
+            await SetListDataAsync();
+        }
+    }
+}

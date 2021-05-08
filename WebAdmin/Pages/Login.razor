@@ -1,0 +1,96 @@
+﻿@page "/auth/login"
+@inject IAuthenticationService _authenticationService
+@inject ILogger<Login> _logger
+@inject NavigationManager _navigationManager
+
+<h3>Login</h3>
+<div>
+    @if (!showCodeInput)
+    {
+        <p>
+            <MatTextField @bind-Value="@loginValue" Label="Email"></MatTextField>
+            <MatButton Icon="done" OnClick="@OnSendCodeClickAsync" Label="Send code"></MatButton>
+        </p>
+    }
+    else
+    {
+        <p>A confirmation code has been sent to your email address (@loginValue)</p>
+        <p>
+            <MatTextField @bind-Value="@codeValue" Label="Confirmation code"></MatTextField>
+            <MatButton Icon="done" OnClick="@OnLoginClickAsync" Label="Login"></MatButton>
+        </p>
+    }
+    @if (requestError)
+    {
+        <p>@errorMessage</p>
+    }
+</div>
+
+@code {
+    [CascadingParameter]
+    public Error Error { get; set; }
+
+    string loginValue = "estarov88@gmail.com";
+    string codeValue;
+    bool showCodeInput = false;
+
+    bool requestError = false;
+    string errorMessage;
+
+    string message;
+
+    public async Task OnSendCodeClickAsync(MouseEventArgs e)
+    {
+        //JsRuntime.InvokeAsync<object>("window.alert", "Test");
+        ApiResponse<object> result = null;
+        try
+        {
+            requestError = false;
+            result = await _authenticationService.SendConfirmationCodeAsync(new BlazorCore.Models.Requests.ConfirmationCodeRequestModel
+            {
+                Entity = loginValue,
+                EntityType = BlazorCore.Enums.NotificationEntityType.Email
+            });
+            if (result.Success)
+            {
+                message = result.Message;
+                showCodeInput = true;
+            }
+            else
+            {
+                throw new ApplicationException(result.Message);
+            }
+        }
+        catch (Exception ex)
+        {
+            requestError = true;
+            errorMessage = ex.Message;
+            Error.ProcessError(ex);
+        }
+    }
+
+    public async Task OnLoginClickAsync(MouseEventArgs e)
+    {
+        ApiResponse<LoginModel> result = null;
+        try
+        {
+            requestError = false;
+            result = await _authenticationService.LoginAsync<LoginModel>(loginValue, codeValue);
+            if (result.Success)
+            {
+                _navigationManager.NavigateTo("/");
+                StateHasChanged();
+            }
+            else
+            {
+                throw new ApplicationException(result.Message);
+            }
+        }
+        catch (Exception ex)
+        {
+            requestError = true;
+            errorMessage = ex.Message;
+            Error.ProcessError(ex);
+        }
+    }
+}

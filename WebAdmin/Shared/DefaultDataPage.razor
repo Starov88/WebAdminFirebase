@@ -1,0 +1,8 @@
+﻿@code {
+    [CascadingParameter]
+    public Error Error { get; set; }
+
+    protected bool loadFailed = false;
+    protected string errorMessage = null;
+    protected string message = null;
+}

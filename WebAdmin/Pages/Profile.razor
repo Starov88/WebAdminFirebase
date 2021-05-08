@@ -1,0 +1,114 @@
+﻿@page "/profile"
+@inject IRequestSenderService _requestSenderService
+@inject Blazored.LocalStorage.ILocalStorageService _localStorage
+@inject IAuthenticationService _authenticationService
+@inject ILogger<Profile> _logger
+@inherits DefaultDataPage
+
+@using BlazorCore.Models.Users
+
+<h3>Profile</h3>
+
+@if (user == null && !loadFailed)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    if (loadFailed)
+    {
+        <p><em>@errorMessage</em></p>
+    }
+    else
+    {
+        <div class="mat-layout-grid">
+            <div class="mat-layout-grid-inner">
+                <div class="mat-layout-grid-cell mat-layout-grid-cell-span-4">
+                    <MatCard>
+                        <MatCardContent>
+                            <MatCardMedia Wide="true" Style="min-height:350px; background-repeat:no-repeat;" ImageUrl="@user.LogoUrl"></MatCardMedia>
+                        </MatCardContent>
+                    </MatCard>
+                </div>
+                <div class="mat-layout-grid-cell mat-layout-grid-cell-span-4">
+                    <div>
+                        <MatSubtitle1>User ID</MatSubtitle1>
+                        <MatHeadline6>@user.Id</MatHeadline6>
+                    </div>
+                    <div>
+                        <MatSubtitle1>Email</MatSubtitle1>
+                        <MatHeadline6>@user.Email</MatHeadline6>
+                    </div>
+                    <div>
+                        <MatSubtitle1>Full Name</MatSubtitle1>
+                        <MatHeadline6>@user.FullName</MatHeadline6>
+                    </div>
+                </div>
+                <div class="mat-layout-grid-cell mat-layout-grid-cell-span-4">
+                    <div>
+                        <MatSubtitle1>Status</MatSubtitle1>
+                        <MatHeadline6>@user.UserStatus</MatHeadline6>
+                    </div>
+                    <div>
+                        <MatSubtitle1>Created at</MatSubtitle1>
+                        <MatHeadline6>@user.CreatedAt</MatHeadline6>
+                    </div>
+                    <div>
+                        <MatSubtitle1>Last visit</MatSubtitle1>
+                        <MatHeadline6>@user.LastVisit</MatHeadline6>
+                    </div>
+                </div>
+            </div>
+            <MatButton Icon="assignment_return" Outlined="true" OnClick="@OnLogoutClickAsync" Style="margin:10px 0;" Label="Logout"></MatButton>
+        </div>
+    }
+}
+
+@code {
+    UserModel user = null;
+
+    [Parameter]
+    public Guid UserId { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        user = await _localStorage.GetItemAsync<UserModel>(BlazorCore.Enums.LocalStorageKey.User.ToString());
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+            await SetDataAsync();
+    }
+
+    private async Task SetDataAsync()
+    {
+        ApiResponse<UserModel> result = null;
+        try
+        {
+            loadFailed = false;
+            result = await _requestSenderService
+                .SendAsync<ApiResponse<UserModel>>(HttpMethod.Get, $"v1/user", null);
+            if (result.Success)
+            {
+                user = result.Data ?? null;
+            }
+            else
+            {
+                throw new ApplicationException("Data retrieval error");
+            }
+        }
+        catch (Exception ex)
+        {
+            user = null;
+            loadFailed = true;
+            errorMessage = ex.Message;
+            Error.ProcessError(ex);
+        }
+    }
+
+    private async Task OnLogoutClickAsync()
+    {
+        await _authenticationService.LogoutAsync();
+    }
+}
