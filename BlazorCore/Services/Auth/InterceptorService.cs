@@ -22,6 +22,7 @@ namespace BlazorCore.Services.Auth
 		public async Task InterceptBeforeHttpAsync(object sender, HttpClientInterceptorEventArgs e)
 		{
 			var absolutePath = e.Request.RequestUri.AbsolutePath;
+			e.Request.Headers.TryAddWithoutValidation("Access-Control-Allow-Origin", "*");
 
 			if (!absolutePath.Contains("identity/") ||
 				absolutePath.Contains("identity/logout") || absolutePath.Contains("identity/registration"))
