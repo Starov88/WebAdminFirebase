@@ -84,7 +84,7 @@ else
         {
             loadFailed = false;
             result = await _requestSenderService
-                .SendAsync<ApiResponse<PaginatedModel<UserBriefModel>>>(HttpMethod.Get, $"v1/admin/users/list?page={pageIndex}&pagesize={pageSize}&order={userOrder}", null, null);
+                .SendAsync<ApiResponse<PaginatedModel<UserBriefModel>>>(HttpMethod.Get, $"https://dev-gateway.op.today/v1/admin/users/list?page={pageIndex}&pagesize={pageSize}&order={userOrder}", null, null);
             if (result.Success)
             {
                 users = result.Data.Items ?? new List<UserBriefModel>();

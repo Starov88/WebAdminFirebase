@@ -20,7 +20,7 @@ namespace WebAdmin
             builder.RootComponents.Add<App>("app");
             builder.Services.AddScoped(sp => new HttpClient
             {
-                BaseAddress = new Uri("https://dev-gateway.op.today/")
+                BaseAddress = new Uri(builder.HostEnvironment.BaseAddress)
             }
             .EnableIntercept(sp));
 

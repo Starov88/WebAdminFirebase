@@ -80,7 +80,7 @@ else
         {
             loadFailed = false;
             result = await _requestSenderService
-                .SendAsync<ApiResponse<UserModel>>(HttpMethod.Get, $"v1/admin/users/{UserId.ToString()}", null);
+                .SendAsync<ApiResponse<UserModel>>(HttpMethod.Get, $"https://dev-gateway.op.today/v1/admin/users/{UserId.ToString()}", null);
             if (result.Success)
             {
                 user = result.Data ?? null;
