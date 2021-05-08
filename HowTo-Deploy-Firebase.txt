@@ -1,0 +1,136 @@
+**********************************************************************
+** Visual Studio 2019 Developer Command Prompt v16.9.2
+** Copyright (c) 2021 Microsoft Corporation
+**********************************************************************
+
+C:\Program Files (x86)\Microsoft Visual Studio\2019\Community>cd C:\My\Projects\WebAdmin-Firebase
+
+C:\My\Projects\WebAdmin-Firebase>firebase init
+
+     ######## #### ########  ######## ########     ###     ######  ########
+     ##        ##  ##     ## ##       ##     ##  ##   ##  ##       ##
+     ######    ##  ########  ######   ########  #########  ######  ######
+     ##        ##  ##    ##  ##       ##     ## ##     ##       ## ##
+     ##       #### ##     ## ######## ########  ##     ##  ######  ########
+
+You're about to initialize a Firebase project in this directory:
+
+  C:\My\Projects\WebAdmin-Firebase
+
+Before we get started, keep in mind:
+
+  * You are currently outside your home directory
+
+? Are you ready to proceed? Yes
+? Which Firebase CLI features do you want to set up for this folder? Press Space to select features, then Enter to confirm your choices. Hosting: Configure and deploy Firebase Hosting sites
+
+=== Project Setup
+
+First, let's associate this project directory with a Firebase project.
+You can create multiple project aliases by running firebase use --add,
+but for now we'll just set up a default project.
+
+? Please select an option: Create a new project
+i  If you want to create a project in a Google Cloud organization or folder, please use "firebase projects:create" instead, and return to this command when you've created the project.
+? Please specify a unique project id (warning: cannot be modified afterward) [6-30 characters]:
+ blazor-webadmin
+? What would you like to call your project? (defaults to your project ID)
+√ Creating Google Cloud Platform project
+√ Adding Firebase resources to Google Cloud Platform project
+
+=== Your Firebase project is ready! ===
+
+Project information:
+   - Project ID: blazor-webadmin
+   - Project Name: blazor-webadmin
+
+Firebase console is available at
+https://console.firebase.google.com/project/blazor-webadmin/overview
+i  Using project blazor-webadmin (blazor-webadmin)
+
+=== Hosting Setup
+
+Your public directory is the folder (relative to your project directory) that
+will contain Hosting assets to be uploaded with firebase deploy. If you
+have a build process for your assets, use your build's output directory.
+
+? What do you want to use as your public directory? release/wwwroot
+? Configure as a single-page app (rewrite all urls to /index.html)? Yes
+? Set up automatic builds and deploys with GitHub? Yes
+? File release/wwwroot/index.html already exists. Overwrite? Yes
++  Wrote release/wwwroot/index.html
+
+i  Detected a .git folder at C:\My\Projects\WebAdmin-Firebase
+i  Authorizing with GitHub to upload your service account to a GitHub repository's secrets store.
+
+Visit this URL on this device to log in:
+https://github.com/login/oauth/authorize?client_id=89cf50f02ac6aaed3484&state=355149084&redirect_uri=http%3A%2F%2Flocalhost%3A9005&scope=read%3Auser%20repo%20public_repo
+
+Waiting for authentication...
+
++  Success! Logged into GitHub as Starov88
+
+? For which GitHub repository would you like to set up a GitHub workflow? (format: user/repository) Starov88/WebAdminFirebase
+
++  Created service account github-action-365527419 with Firebase Hosting admin permissions.
++  Uploaded service account JSON to GitHub as secret FIREBASE_SERVICE_ACCOUNT_BLAZOR_WEBADMIN.
+i  You can manage your secrets at https://github.com/Starov88/WebAdminFirebase/settings/secrets.
+
+? Set up the workflow to run a build script before every deploy? Yes
+? What script should be run before every deploy? (npm ci && npm run build) dotnet publish -c Release -o release WebAdmin/WebAdmin.csproj
+? What script should be run before every deploy? npm ci && npm run build
+
++  Created workflow file C:\My\Projects\WebAdmin-Firebase\.github/workflows/firebase-hosting-pull-request.yml
+? Set up automatic deployment to your site's live channel when a PR is merged? Yes
+? What is the name of the GitHub branch associated with your site's live channel? master
+
++  Created workflow file C:\My\Projects\WebAdmin-Firebase\.github/workflows/firebase-hosting-merge.yml
+
+i  Action required: Visit this URL to revoke authorization for the Firebase CLI GitHub OAuth App:
+https://github.com/settings/connections/applications/89cf50f02ac6aaed3484
+i  Action required: Push any new workflow file(s) to your repo
+
+i  Writing configuration info to firebase.json...
+i  Writing project information to .firebaserc...
+
++  Firebase initialization complete!
+
+-------------------заменить npm ci && npm run build на dotnet publish -c Release -o release WebAdmin/WebAdmin.csproj в двух сгенерированных файлах .yml
+-------------------удалить папку /release
+
+C:\My\Projects\WebAdmin-Firebase>dotnet publish -c Release -o release WebAdmin/WebAdmin.csproj
+Microsoft (R) Build Engine версии 16.9.0+57a23d249 для .NET
+(C) Корпорация Майкрософт (Microsoft Corporation). Все права защищены.
+
+  Определение проектов для восстановления...
+  Все проекты обновлены для восстановления.
+  BlazorCore -> C:\My\Projects\WebAdmin-Firebase\BlazorCore\bin\Release\netstandard2.1\BlazorCore.dll
+C:\My\Projects\WebAdmin-Firebase\WebAdmin\Shared\MainLayout.razor.cs(68,28): warning CS1998: В данном асинхронном методе отсутствуют операторы await, поэтому метод будет выполняться синхронно. Воспользуйтесь оператором await для ожидания неблокирующих вызовов API или оператором await Task.Run(...) для выполнения связанных с ЦП заданий в фоновом потоке. [C:\My\Projects\WebAdmin-Firebase\WebAdmin\WebAdmin.csproj]
+C:\My\Projects\WebAdmin-Firebase\WebAdmin\Shared\MainLayout.razor.cs(73,28): warning CS1998: В данном асинхронном методе отсутствуют операторы await, поэтому метод будет выполняться синхронно. Воспользуйтесь оператором await для ожидания неблокирующих вызовов API или оператором await Task.Run(...) для выполнения связанных с ЦП заданий в фоновом потоке. [C:\My\Projects\WebAdmin-Firebase\WebAdmin\WebAdmin.csproj]
+  WebAdmin -> C:\My\Projects\WebAdmin-Firebase\WebAdmin\bin\Release\netstandard2.1\WebAdmin.dll
+  WebAdmin (Blazor output) -> C:\My\Projects\WebAdmin-Firebase\WebAdmin\bin\Release\netstandard2.1\wwwroot
+  WebAdmin -> C:\My\Projects\WebAdmin-Firebase\release\
+
+C:\My\Projects\WebAdmin-Firebase>firebase serve --only hosting
+i  hosting: Serving hosting files from: release/wwwroot
++  hosting: Local server: http://localhost:5000
+
+C:\My\Projects\WebAdmin-Firebase>firebase deploy
+
+=== Deploying to 'blazor-webadmin'...
+
+i  deploying hosting
+i  hosting[blazor-webadmin]: beginning deploy...
+i  hosting[blazor-webadmin]: found 161 files in release/wwwroot
++  hosting[blazor-webadmin]: file upload complete
+i  hosting[blazor-webadmin]: finalizing version...
++  hosting[blazor-webadmin]: version finalized
+i  hosting[blazor-webadmin]: releasing new version...
++  hosting[blazor-webadmin]: release complete
+
++  Deploy complete!
+
+Project Console: https://console.firebase.google.com/project/blazor-webadmin/overview
+Hosting URL: https://blazor-webadmin.web.app
+
+C:\My\Projects\WebAdmin-Firebase>

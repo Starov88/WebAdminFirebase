@@ -1,8 +1,8 @@
 ﻿@page "/"
-@page "/{text}"
+@page "/{name}"
 @inject BlazorCore.Services.NotifyService NotifyService
 
-<h1>@Text!!!</h1>
+<h1>@headerText</h1>
 
 <div @onclick="Hello" style="height: 90vh;">
     Welcome to your new app.
@@ -13,18 +13,22 @@
 @code {
     private SurveyPrompt surveyPrompt;
     private int counter = 1;
+    private string headerText = "Hello";
 
     [Parameter]
-    public string Text { get; set; }
+    public string Name { get; set; }
 
     protected override void OnInitialized()
     {
-        Text = Text ?? "Hello, world!";
+        if (!string.IsNullOrWhiteSpace(Name))
+        {
+            headerText += $", {Name}";
+        }
     }
 
     private async Task Hello()
     {
         await surveyPrompt.SayHello("Hello");
-        await NotifyService.Update(Text, counter++);
+        await NotifyService.Update(Name, counter++);
     }
 }
