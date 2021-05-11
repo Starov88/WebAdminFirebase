@@ -1,5 +1,6 @@
 ﻿@using Microsoft.Extensions.Logging
 @inject ILogger<Error> _logger
+@inject NavigationManager _navigationManager
 
 <CascadingValue Value=this>
     @ChildContent
@@ -13,5 +14,9 @@
     {
         _logger.LogError("ProcessError - Type: {Type} Message: {Message}",
         ex.GetType(), ex.Message);
+        if (ex.GetType() == typeof(UnauthorizedAccessException))
+        {
+            _navigationManager.NavigateTo($"/error/Unauthorized");
+        }
     }
 }

@@ -1,6 +1,8 @@
 ﻿@page "/"
 @page "/{name}"
-@inject BlazorCore.Services.NotifyService NotifyService
+@inject BlazorCore.Services.NotifyService _notifyService
+@inject Blazored.LocalStorage.ILocalStorageService _localStorage
+@using BlazorCore.Models.Users
 
 <h1>@headerText</h1>
 
@@ -14,21 +16,32 @@
     private SurveyPrompt surveyPrompt;
     private int counter = 1;
     private string headerText = "Hello";
+    private string name = "";
 
     [Parameter]
     public string Name { get; set; }
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
-        if (!string.IsNullOrWhiteSpace(Name))
+        if (string.IsNullOrWhiteSpace(Name))
         {
+            var user = await _localStorage.GetItemAsync<UserModel>(BlazorCore.Enums.LocalStorageKey.User.ToString());
+            if(!string.IsNullOrWhiteSpace(user?.FullName))
+            {
+                name = user?.FullName;
+                headerText += $", {user.FullName}";
+            }
+        }
+        else
+        {
+            name = Name;
             headerText += $", {Name}";
         }
     }
 
     private async Task Hello()
     {
-        await surveyPrompt.SayHello("Hello");
-        await NotifyService.Update(Name, counter++);
+        await surveyPrompt.SayHello(headerText);
+        await _notifyService.Update(name, counter++);
     }
 }

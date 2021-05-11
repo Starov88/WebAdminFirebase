@@ -4,6 +4,7 @@
 @inject IAuthenticationService _authenticationService
 @inject ILogger<Profile> _logger
 @inherits DefaultDataPage
+@attribute [Authorize]
 
 @using BlazorCore.Models.Users
 

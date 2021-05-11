@@ -3,6 +3,7 @@
 @inject ILogger<UserList> _logger
 @inject NavigationManager _navigationManager
 @inherits DefaultDataPage
+@attribute [Authorize]
 
 @using BlazorCore.Enums
 @using BlazorCore.Models.Users
@@ -22,12 +23,6 @@ else
     else
     {
         <MatTable Items="@users" Striped="true" PageSize="@pageSize" UseSortHeaderRow="true" AllowSelection="true" ShowPaging="false" OnRowDbClick="@OnRowClick" class="mat-elevation-z5">
-            @*<MatTableHeader>
-                    <th style="width: 350px">Id</th>
-                    <th style="width: 350px">Email</th>
-                    <th style="width: 350px">Name</th>
-                    <th>Status</th>
-                </MatTableHeader>*@
             <MatTableHeader>
                 <MatSortHeaderRow SortChanged="@SortDataAsync">
                     <MatSortHeader SortId="email"><span style="width:250px">Email</span></MatSortHeader>
@@ -92,6 +87,10 @@ else
             }
             else
             {
+                if(result.StatusCode == 401)
+                {
+                    throw new UnauthorizedAccessException();
+                }
                 throw new ApplicationException("Data retrieval error");
             }
         }

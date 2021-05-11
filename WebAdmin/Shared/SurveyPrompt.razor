@@ -1,4 +1,4 @@
-﻿@inject IJSRuntime JSRuntime;
+﻿@inject IJSRuntime JSRuntime
 @inject BlazorCore.Services.NotifyService _notifyService
 @implements IDisposable
 
@@ -13,7 +13,11 @@
     and tell us what you think!!!
 </div>
 
-<p>Click: @lastNotification.key = @lastNotification.value</p>
+@if (lastNotification.key != "Not set")
+{
+    <p>Click by "@lastNotification.key" = @lastNotification.value</p>
+}
+
 
 @code {
     private (string key, int value) lastNotification = ("Not set", 0);
@@ -35,7 +39,7 @@
 
     public async Task OnNotify(string key, int value)
     {
-        if(key == "Jo")
+        if (!string.IsNullOrWhiteSpace(key))
         {
             await InvokeAsync(() =>
             {

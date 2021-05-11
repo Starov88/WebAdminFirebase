@@ -24,6 +24,8 @@ namespace WebAdmin
             }
             .EnableIntercept(sp));
 
+            builder.Services.AddOptions();
+            builder.Services.AddAuthorizationCore();
             builder.Services.AddHttpClientInterceptor();
             builder.Services.AddBlazoredLocalStorage();
             builder.Services.AddScoped<IRequestSenderService, RequestSenderService>();

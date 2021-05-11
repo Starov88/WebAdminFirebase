@@ -1,0 +1,9 @@
+﻿@page "/error/{text}"
+@layout EmptyLayout;
+
+<h3>Error: @Text</h3>
+
+@code {
+    [Parameter]
+    public string Text { get; set; }
+}

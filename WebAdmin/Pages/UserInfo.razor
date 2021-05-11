@@ -2,6 +2,7 @@
 @inject IRequestSenderService _requestSenderService
 @inject ILogger<UserList> _logger
 @inherits DefaultDataPage
+@attribute [Authorize]
 
 @using BlazorCore.Models.Users
 

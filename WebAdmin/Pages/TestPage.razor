@@ -1,0 +1,46 @@
+﻿@page "/test"
+@page "/test/{text}"
+@layout EmptyLayout;
+@inject NavigationManager _navigationManager
+@inject IJSRuntime _jsRuntime
+
+<h3>Test page</h3>
+<h4>Route param = @Text</h4>
+<h4>Param initialCount = @currentCount</h4>
+
+<a href="/error/message?initialCount=10">Start counter at 10.</a> |
+<a href="/error/message?initialCount=20">Start counter at 20.</a> |
+<a href="/error/message?initialCount=30">Start counter at 30.</a>
+
+@code {
+    [Parameter]
+    public string Text { get; set; }
+
+    int currentCount = 0;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _navigationManager.LocationChanged += HandleLocationChanged;
+        var uri = new Uri(_navigationManager.Uri);
+        if (_navigationManager.TryGetQueryParam<int>("initialCount", out var count))
+        {
+            currentCount = count;
+            await _jsRuntime.InvokeAsync<object>("console.log", count);
+        }
+    }
+
+    void HandleLocationChanged(object sender, LocationChangedEventArgs e)
+    {
+        GetQueryParam();
+        StateHasChanged();
+    }
+
+    void GetQueryParam()
+    {
+        if (_navigationManager.TryGetQueryParam<int>("initialCount", out var count))
+        {
+            currentCount = count;
+        }
+    }
+
+}
